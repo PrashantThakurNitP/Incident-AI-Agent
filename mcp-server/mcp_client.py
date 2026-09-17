@@ -50,6 +50,24 @@ async def main():
 
             print("\nLogs result:")
             print(logs_result)
+            deployment_result = await session.call_tool(
+                "get_deployment_status",
+                arguments={
+                    "service_name": "payment-service"
+                },
+            )
+            print("\nDeployment result:")
+            print(deployment_result)
+            
+            database_result = await session.call_tool(
+                "get_database_stats",
+                arguments={
+                    "service_name": "payment-service"
+                },
+            )
+            
+            print("\nDatabase result:")
+            print(database_result)
 
 
 if __name__ == "__main__":

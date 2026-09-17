@@ -72,6 +72,28 @@ def get_deployment_status(service_name: str) -> dict:
         "version": "unknown",
         "status": "healthy",
     }
+@mcp.tool()
+def get_database_stats(service_name: str) -> dict:
+    """
+    Get current database health and performance statistics.
+    """
+
+    if service_name == "payment-service":
+        return {
+            "service": "payment-service",
+            "database": "postgresql",
+            "connection_pool_active": 18,
+            "connection_pool_max": 50,
+            "slow_queries": 0,
+            "average_query_latency_ms": 45,
+            "status": "healthy",
+        }
+
+    return {
+        "service": service_name,
+        "database": "postgresql",
+        "status": "healthy",
+    }
 
 
 if __name__ == "__main__":
