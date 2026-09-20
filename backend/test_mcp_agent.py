@@ -3,12 +3,14 @@ from pathlib import Path
 
 from langchain_ollama import ChatOllama
 from langchain_core.messages import ToolMessage
+from langchain_core.messages import SystemMessage
 
 # Allow Python to import files from mcp-server
 MCP_SERVER_PATH = Path(__file__).parent.parent / "mcp-server"
 sys.path.append(str(MCP_SERVER_PATH))
 
 from mcp_langchain_bridge import mcp_tools
+from rag_tool import rag_tool
 
 
 llm = ChatOllama(
@@ -16,7 +18,9 @@ llm = ChatOllama(
     temperature=0,
 )
 
-llm_with_tools = llm.bind_tools(mcp_tools)
+all_tools = mcp_tools + [rag_tool]
+
+llm_with_tools = llm.bind_tools(all_tools)
 
 
 messages = [
@@ -25,14 +29,21 @@ messages = [
         """
         Investigate why payment-service latency is high.
 
-        Use the available operational tools to:
+        Use the available tools to investigate the incident.
+
+        You should:
         1. Check current service metrics.
         2. Check recent service logs.
         3. Check deployment status.
         4. Check database health.
+        5. Search historical incidents and runbooks for
+           relevant information.
 
-        Correlate the evidence before providing your conclusion.
-        """,
+        Correlate the current operational evidence with
+        historical knowledge before reaching a conclusion.
+
+        Do not guess. Base the conclusion on evidence.
+        """
     )
 ]
 
@@ -64,7 +75,7 @@ while True:
 
         selected_tool = next(
             tool
-            for tool in mcp_tools
+            for tool in all_tools
             if tool.name == tool_name
         )
 
@@ -79,6 +90,7 @@ while True:
                 tool_call_id=tool_call["id"],
             )
         )
+    print("\nAll tool results added. Calling LLM again...")
 
 
 print("\n==============================")
