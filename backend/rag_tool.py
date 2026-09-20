@@ -28,11 +28,12 @@ def search_incident_knowledge(query: str) -> list[dict]:
 
     results = vector_store.similarity_search(
         query,
-        k=3,
+        k=2,
     )
 
     return [
         {
+            "evidence_type": "HISTORICAL_DOCUMENTATION",
             "source": document.metadata.get("source"),
             "content": document.page_content,
         }

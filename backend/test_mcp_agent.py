@@ -29,20 +29,32 @@ messages = [
         """
         Investigate why payment-service latency is high.
 
-        Use the available tools to investigate the incident.
+        IMPORTANT:
+        - MCP tools provide CURRENT operational evidence.
+        - The RAG tool provides HISTORICAL documentation.
+        - Never treat historical incident data as current data.
+        - Use historical incidents only to compare patterns.
+        - Do not claim that something happened currently unless
+          a CURRENT MCP tool explicitly reports it.
+        - Do not combine facts from different historical incidents.
+        - A historical incident can support a hypothesis, but it
+          cannot prove that the same event happened now.
 
-        You should:
+        Use the available tools to:
         1. Check current service metrics.
-        2. Check recent service logs.
-        3. Check deployment status.
-        4. Check database health.
-        5. Search historical incidents and runbooks for
-           relevant information.
+        2. Check current service logs.
+        3. Check current deployment status.
+        4. Check current database health.
+        5. Search historical incidents and runbooks.
 
-        Correlate the current operational evidence with
-        historical knowledge before reaching a conclusion.
+        Correlate current evidence with historical patterns.
 
-        Do not guess. Base the conclusion on evidence.
+        Final response must clearly distinguish:
+        - Current evidence
+        - Historical evidence
+        - Most likely cause
+        - Evidence supporting the cause
+        - Evidence that argues against other causes
         """
     )
 ]

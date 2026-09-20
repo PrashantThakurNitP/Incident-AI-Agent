@@ -103,7 +103,12 @@ logs_tool = StructuredTool.from_function(
 deployment_tool = StructuredTool.from_function(
     func=get_deployment_status,
     name="get_deployment_status",
-    description="Get the current deployment status and version of a service.",
+    description=(
+        "Get CURRENT deployment information for a service, including "
+        "version, previous version, deployment time, deployment status, "
+        "and reported deployment changes. Use this to determine whether "
+        "a recent deployment is relevant to the current incident."
+    ),
 )
 
 database_tool = StructuredTool.from_function(
