@@ -1,11 +1,19 @@
 import asyncio
 import sys
 from pathlib import Path
-
+# MCP client used to test communication with the MCP server.
+# mcp_client.py
+#       │
+#       │ MCP
+#       ▼
+# server.py
+#       │
+#       ▼
+# tool
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
-
+# MCP client used to test communication with the MCP server.
 SERVER_PATH = Path(__file__).parent / "server.py"
 
 

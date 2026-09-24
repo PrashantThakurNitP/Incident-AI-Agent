@@ -1,7 +1,17 @@
 from langchain_ollama import OllamaEmbeddings
 from langchain_postgres import PGVector
 
+# This is the simplest RAG retrieval test.
+# User query
+#     ↓
+# Embedding
+#     ↓
+# pgvector similarity search
+#     ↓
+# Top matching documents
 
+# It allowed us to verify that the vector database actually works before adding the LLM.
+# It allowed us to verify that the vector database actually works before adding the LLM.
 # Local embedding model
 embeddings = OllamaEmbeddings(
     model="nomic-embed-text"

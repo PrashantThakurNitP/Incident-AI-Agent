@@ -1,5 +1,13 @@
 from mcp.server import MCPServer
 
+# actual MCP server.
+# exposes operational tools:
+
+# get_service_metrics
+# get_service_logs
+# get_deployment_status
+# get_database_stats
+
 mcp = MCPServer("Incident Operations Server")
 
 

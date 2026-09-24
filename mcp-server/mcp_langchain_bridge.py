@@ -7,7 +7,7 @@ from langchain_core.tools import StructuredTool
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
-
+# The bridge converts the MCP tools into LangChain-compatible tools.
 SERVER_PATH = Path(__file__).parent / "server.py"
 
 
@@ -46,7 +46,6 @@ async def call_mcp_tool(tool_name: str, service_name: str) -> dict:
 
 def get_service_metrics(service_name: str) -> dict:
     """Get current operational metrics for a service."""
-
     return asyncio.run(
         call_mcp_tool(
             "get_service_metrics",
@@ -57,7 +56,6 @@ def get_service_metrics(service_name: str) -> dict:
 
 def get_service_logs(service_name: str) -> dict:
     """Get recent logs for a service."""
-
     return asyncio.run(
         call_mcp_tool(
             "get_service_logs",
@@ -68,7 +66,6 @@ def get_service_logs(service_name: str) -> dict:
 
 def get_deployment_status(service_name: str) -> dict:
     """Get the current deployment status and version of a service."""
-
     return asyncio.run(
         call_mcp_tool(
             "get_deployment_status",
@@ -79,7 +76,6 @@ def get_deployment_status(service_name: str) -> dict:
 
 def get_database_stats(service_name: str) -> dict:
     """Get current database health and performance statistics."""
-
     return asyncio.run(
         call_mcp_tool(
             "get_database_stats",

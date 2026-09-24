@@ -2,7 +2,8 @@ from langchain_core.tools import StructuredTool
 from langchain_ollama import OllamaEmbeddings
 from langchain_postgres import PGVector
 
-
+# It converts RAG into a LangChain tool.
+# This is what allows the LLM/agent to treat RAG as one of its capabilities.
 embeddings = OllamaEmbeddings(
     model="nomic-embed-text"
 )
@@ -32,13 +33,17 @@ def search_incident_knowledge(query: str) -> list[dict]:
     )
 
     return [
-        {
-            "evidence_type": "HISTORICAL_DOCUMENTATION",
-            "source": document.metadata.get("source"),
-            "content": document.page_content,
-        }
-        for document in results
-    ]
+    {
+        "evidence_type": "HISTORICAL_DOCUMENTATION",
+        "source": document.metadata.get("source"),
+        "content": document.page_content,
+        "usage": (
+            "Historical reference only. "
+            "Do not treat this information as current operational evidence."
+        ),
+    }
+    for document in results
+]
 
 
 rag_tool = StructuredTool.from_function(
@@ -52,3 +57,27 @@ rag_tool = StructuredTool.from_function(
         "previous incidents related to the current problem."
     ),
 )
+
+
+# Instead of manually doing:
+
+# search()
+
+# we expose:
+
+# search_incident_knowledge
+
+# as a tool.
+
+# Conceptually:
+
+# LangChain Agent
+#        │
+#        ▼
+# search_incident_knowledge()
+#        │
+#        ▼
+# PGVector
+#        │
+#        ▼
+# Historical documents

@@ -1,7 +1,9 @@
 from langchain_ollama import ChatOllama
 from langchain.tools import tool
 
+# This proved that your local 3B model supports structured tool calling.
 
+# That's important because the final system is agentic.
 @tool
 def get_service_metrics(service_name: str) -> dict:
     """Get current operational metrics for a service."""
