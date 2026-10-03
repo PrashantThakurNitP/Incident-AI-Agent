@@ -339,7 +339,7 @@ INVESTIGATION RULES
     value based only on historical documentation.
 
 30. If historical documentation contains a configuration value,
-    treat that value as historical context only unless the current
+    treat that value as historical context only unless current
     operational evidence confirms that the same value is currently
     required.
 
@@ -351,6 +351,18 @@ INVESTIGATION RULES
     say that the available current evidence does not indicate a problem
     with that component rather than claiming the component is definitively
     not responsible.
+
+33. Recommended next investigation steps must be based on the current
+    evidence. Do not recommend a specific configuration value solely
+    because it appears in historical documentation.
+
+34. If a historical configuration value is relevant to the investigation,
+    recommend verifying the current configuration against that historical
+    value rather than recommending that the current configuration be
+    changed to that value.
+
+35. Do not use phrases such as "within normal limits" or "normal range"
+    unless a current threshold is explicitly provided in the evidence.
 
 ==================================================
 IMPORTANT EVIDENCE PROVENANCE
