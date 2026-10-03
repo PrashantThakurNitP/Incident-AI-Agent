@@ -1,122 +1,256 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./index.css";
+
+const API_URL = "http://127.0.0.1:8000";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [serviceName, setServiceName] = useState("payment-service");
+  const [problem, setProblem] = useState("High payment-service latency");
+  const [report, setReport] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const investigateIncident = async () => {
+    if (!problem.trim()) {
+      setError("Please describe the incident.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    setReport(null);
+
+    try {
+      const response = await fetch(
+        `${API_URL}/api/incidents/investigate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            service_name: serviceName,
+            problem: problem.trim(),
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Investigation failed.");
+      }
+
+      setReport(data);
+    } catch (err) {
+      setError(
+        err.message ||
+          "Unable to connect to the incident investigation backend."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
+    <div className="app">
+      <header className="header">
         <div>
-          <h1>Get started</h1>
+          <h1>Incident Investigation AI</h1>
           <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+            AI-powered incident analysis using RAG, MCP, LangChain
+            and a local LLM
           </p>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <div className="status">
+          <span className="status-dot"></span>
+          Local AI
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      <main className="container">
+        <section className="investigation-card">
+          <div className="section-title">
+            <div>
+              <h2>Investigate Incident</h2>
+              <p>
+                Combine current operational data with historical
+                incident knowledge.
+              </p>
+            </div>
+          </div>
+
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Service</label>
+
+              <select
+                value={serviceName}
+                onChange={(e) => setServiceName(e.target.value)}
+              >
+                <option value="payment-service">
+                  payment-service
+                </option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Problem</label>
+
+              <input
+                type="text"
+                value={problem}
+                onChange={(e) => setProblem(e.target.value)}
+                placeholder="Describe the incident..."
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    investigateIncident();
+                  }
+                }}
+              />
+            </div>
+          </div>
+
+          <button
+            className="investigate-button"
+            onClick={investigateIncident}
+            disabled={loading}
+          >
+            {loading ? "Investigating..." : "Investigate Incident"}
+          </button>
+
+          {error && <div className="error">{error}</div>}
+        </section>
+
+        {loading && (
+          <section className="loading-card">
+            <div className="spinner"></div>
+            <div>
+              <strong>Investigating incident...</strong>
+              <p>
+                Collecting MCP operational evidence and searching
+                historical knowledge.
+              </p>
+            </div>
+          </section>
+        )}
+
+        {report && !loading && (
+          <>
+            <section className="cause-card">
+              <div className="cause-header">
+                <span className="badge">AI ANALYSIS</span>
+                <h2>Most Likely Cause</h2>
+              </div>
+
+              <p className="cause">
+                {report.most_likely_cause}
+              </p>
+            </section>
+
+            <section className="section">
+              <div className="section-heading">
+                <h2>Current Operational Evidence</h2>
+                <span className="source-badge mcp">MCP</span>
+              </div>
+
+              <p className="section-description">
+                Evidence collected from current operational tools.
+              </p>
+
+              <div className="evidence-grid">
+                {report.current_evidence?.map((item, index) => (
+                  <div className="evidence-card" key={index}>
+                    <span className="evidence-number">
+                      {index + 1}
+                    </span>
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="section">
+              <div className="section-heading">
+                <h2>Supporting Evidence</h2>
+              </div>
+
+              <div className="list-card">
+                {report.supporting_evidence?.map((item, index) => (
+                  <div className="list-item" key={index}>
+                    <span className="check">✓</span>
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="section">
+              <div className="section-heading">
+                <h2>Historical Evidence</h2>
+                <span className="source-badge rag">RAG</span>
+              </div>
+
+              <p className="section-description">
+                Historical incidents, runbooks and architecture
+                documentation retrieved from pgvector.
+              </p>
+
+              <div className="history-list">
+                {report.historical_evidence?.map((item, index) => (
+                  <details className="history-card" key={index}>
+                    <summary>
+                      <span>Historical Evidence {index + 1}</span>
+                      <span className="expand">+</span>
+                    </summary>
+
+                    <pre>{item}</pre>
+                  </details>
+                ))}
+              </div>
+            </section>
+
+            <section className="section">
+              <div className="section-heading">
+                <h2>Evidence Against Other Causes</h2>
+              </div>
+
+              <div className="list-card">
+                {report.evidence_against_other_causes?.map(
+                  (item, index) => (
+                    <div className="list-item" key={index}>
+                      <span className="info">i</span>
+                      <span>{item}</span>
+                    </div>
+                  )
+                )}
+              </div>
+            </section>
+
+            <section className="recommendation-card">
+              <div className="section-heading">
+                <h2>Recommended Next Investigation</h2>
+              </div>
+
+              <ol>
+                {report.recommended_next_investigation?.map(
+                  (item, index) => (
+                    <li key={index}>{item}</li>
+                  )
+                )}
+              </ol>
+            </section>
+          </>
+        )}
+      </main>
+
+      <footer>
+        <span>Incident Investigation AI Agent</span>
+        <span>LangChain • RAG • MCP • Ollama • pgvector</span>
+      </footer>
+    </div>
+  );
 }
 
-export default App
+export default App;
