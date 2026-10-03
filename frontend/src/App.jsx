@@ -1,7 +1,6 @@
 import { useState } from "react";
 import "./index.css";
-
-const API_URL = "http://127.0.0.1:8000";
+import { investigateIncident } from "./api/incidentApi";
 
 function App() {
   const [serviceName, setServiceName] = useState("payment-service");
@@ -10,47 +9,32 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const investigateIncident = async () => {
-    if (!problem.trim()) {
-      setError("Please describe the incident.");
-      return;
-    }
+const handleInvestigate = async () => {
+  if (!problem.trim()) {
+    setError("Please describe the incident.");
+    return;
+  }
 
-    setLoading(true);
-    setError("");
-    setReport(null);
+  setLoading(true);
+  setError("");
+  setReport(null);
 
-    try {
-      const response = await fetch(
-        `${API_URL}/api/incidents/investigate`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            service_name: serviceName,
-            problem: problem.trim(),
-          }),
-        }
-      );
+  try {
+    const data = await investigateIncident(
+      serviceName,
+      problem.trim()
+    );
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || "Investigation failed.");
-      }
-
-      setReport(data);
-    } catch (err) {
-      setError(
-        err.message ||
-          "Unable to connect to the incident investigation backend."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+    setReport(data);
+  } catch (err) {
+    setError(
+      err.message ||
+        "Unable to connect to the incident investigation backend."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="app">
@@ -105,7 +89,7 @@ function App() {
                 placeholder="Describe the incident..."
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    investigateIncident();
+                    handleInvestigate();
                   }
                 }}
               />
@@ -114,7 +98,7 @@ function App() {
 
           <button
             className="investigate-button"
-            onClick={investigateIncident}
+            onClick={handleInvestigate}
             disabled={loading}
           >
             {loading ? "Investigating..." : "Investigate Incident"}
