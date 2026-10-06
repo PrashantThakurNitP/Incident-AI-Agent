@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-
+from config import CORS_ORIGINS
 from incident_agent import investigate_incident
 
 
@@ -17,10 +18,19 @@ app = FastAPI(
     version="1.0.0",
 )
 
-
 # ---------------------------------------------------------
 # REQUEST MODEL
 # ---------------------------------------------------------
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 class IncidentRequest(BaseModel):
     service_name: str
